@@ -1,23 +1,29 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local function createBoxAroundPlayer()
-    local box = Instance.new("Part")
-    box.Size = Vector3.new(4, 4, 4)
-    box.Color = Color3.fromRGB(255, 0, 0)
-    box.Transparency = 0.5
-    box.Anchored = true
-    box.CanCollide = false
-    box.Parent = workspace
+local function createHollowBoxAroundPlayer()
+    local boxSize = Vector3.new(10, 10, 10)
+    local wallThickness = 1
+
+    local function createWall(position, size)
+        local wall = Instance.new("Part")
+        wall.Size = size
+        wall.Color = Color3.fromRGB(255, 0, 0)
+        wall.Transparency = 0
+        wall.Anchored = true
+        wall.CanCollide = true
+        wall.Parent = workspace
+        wall.Position = position
+        return wall
+    end
 
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    box.Position = humanoidRootPart.Position + Vector3.new(0, 2, 0)
+    local basePosition = humanoidRootPart.Position
 
-    return box
+    createWall(basePosition + Vector3.new(0, 5, boxSize.Z / 2), Vector3.new(boxSize.X, boxSize.Y, wallThickness))
+    createWall(basePosition + Vector3.new(0, 5, -boxSize.Z / 2), Vector3.new(boxSize.X, boxSize.Y, wallThickness))
+    createWall(basePosition + Vector3.new(boxSize.X / 2, 5, 0), Vector3.new(wallThickness, boxSize.Y, boxSize.Z))
+    createWall(basePosition + Vector3.new(-boxSize.X / 2, 5, 0), Vector3.new(wallThickness, boxSize.Y, boxSize.Z))
 end
 
-character:WaitForChild("HumanoidRootPart").Changed:Connect(function()
-    createBoxAroundPlayer()
-end)
-
-createBoxAroundPlayer()
+createHollowBoxAroundPlayer()
