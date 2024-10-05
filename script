@@ -1,0 +1,23 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local function createBoxAroundPlayer()
+    local box = Instance.new("Part")
+    box.Size = Vector3.new(4, 4, 4)
+    box.Color = Color3.fromRGB(255, 0, 0)
+    box.Transparency = 0.5
+    box.Anchored = true
+    box.CanCollide = false
+    box.Parent = workspace
+
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    box.Position = humanoidRootPart.Position + Vector3.new(0, 2, 0)
+
+    return box
+end
+
+character:WaitForChild("HumanoidRootPart").Changed:Connect(function()
+    createBoxAroundPlayer()
+end)
+
+createBoxAroundPlayer()
