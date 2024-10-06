@@ -1,29 +1,37 @@
-local player = game.Players.LocalPlayer
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local function createHollowBoxAroundPlayer()
-    local boxSize = Vector3.new(10, 10, 10)
-    local wallThickness = 1
-
-    local function createWall(position, size)
-        local wall = Instance.new("Part")
-        wall.Size = size
-        wall.Color = Color3.fromRGB(255, 0, 0)
-        wall.Transparency = 0
-        wall.Anchored = true
-        wall.CanCollide = true
-        wall.Parent = workspace
-        wall.Position = position
-        return wall
-    end
-
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    local basePosition = humanoidRootPart.Position
-
-    createWall(basePosition + Vector3.new(0, 5, boxSize.Z / 2), Vector3.new(boxSize.X, boxSize.Y, wallThickness))
-    createWall(basePosition + Vector3.new(0, 5, -boxSize.Z / 2), Vector3.new(boxSize.X, boxSize.Y, wallThickness))
-    createWall(basePosition + Vector3.new(boxSize.X / 2, 5, 0), Vector3.new(wallThickness, boxSize.Y, boxSize.Z))
-    createWall(basePosition + Vector3.new(-boxSize.X / 2, 5, 0), Vector3.new(wallThickness, boxSize.Y, boxSize.Z))
+local function giveBuildTool()
+    local buildTool = game.ServerStorage:FindFirstChild("Build Tool")
+    if buildTool then
+        local toolClone = buildTool:Clone()
+        toolClone.Parent = player.Backpack
 end
 
-createHollowBoxAroundPlayer()
+local function createHollowBox()
+    local boxSize = Vector3.new(10, 10, 10)
+    local boxCenter = character.PrimaryPart.Position + Vector3.new(0, 5, 0)
+
+    local outerBox = Instance.new("Part")
+    outerBox.Size = boxSize
+    outerBox.Position = boxCenter
+    outerBox.Anchored = true
+    outerBox.Transparency = 0.5
+    outerBox.BrickColor = BrickColor.new("Bright red")
+    outerBox.CanCollide = false
+    outerBox.Parent = Workspace
+
+    local innerBox = Instance.new("Part")
+    innerBox.Size = boxSize - Vector3.new(2, 2, 2)
+    innerBox.Position = boxCenter
+    innerBox.Anchored = true
+    innerBox.Transparency = 1
+    innerBox.CanCollide = false
+    innerBox.Parent = Workspace
+end
+
+giveBuildTool()
+createHollowBox()
